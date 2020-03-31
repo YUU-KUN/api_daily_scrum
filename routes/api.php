@@ -14,6 +14,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+
+Route::post('register', 'UserController@register'); //register
+Route::post('login', 'UserController@login'); //login
+
+
+Route::middleware(['jwt.verify'])->group(function(){
+
+    Route::get('login/check', 'UserController@LoginCheck'); //cek token
+    Route::post('logout', "UserController@logout"); //logout
+
+// Daily Scrum    
+    Route::get('dailyscrum', 'DailyScrumController@index'); //read dailyscrum
+    Route::get('dailyscrum/{limit}/{offset}', 'DailyScrumController@getAll'); //read dailyscrum
+    Route::post('dailyscrum', 'DailyScrumController@store'); //create dailyscrum
+	Route::put('dailyscrum/{id}', "DailyScrumController@update"); //update dailyscrum
+	Route::delete('dailyscrum/{id}', "SiswaController@delete"); //delete dailyscrum
+
 });
+
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
