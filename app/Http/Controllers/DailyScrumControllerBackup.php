@@ -8,18 +8,22 @@ use App\DailyScrum;
 use Illuminate\Support\Facades\Validator;
 use JWTAuth;
 
+use DB;
+
+
 
 class DailyScrumController extends Controller
 {
 
     public function index()
     {
+			// $user = JWTAuth::users()->daily_scrum();
     	try{
 	        $data["count"] = DailyScrum::count();
             $daily_scrum = array();
             
             $userid = DB::table('daily_scrum')->join('users','users.id','=','daily_scrum.id_users')
-                                                ->select('daily_scrum.id','daily_scrum.id_users')
+                                                ->select('daily_scrum.id_users')
                                                 ->get();
 
 
@@ -36,7 +40,7 @@ class DailyScrumController extends Controller
                     "solution"    	        => $p->solution,                              
 	                "created_at"            => $p->created_at,
                     "updated_at"            => $p->updated_at,
-                    "tanggal" 			    => date('Y-m-d', strtotime($p->created_at)),
+                    "tanggal" 			    => date('d-m-y', strtotime($p->created_at)),
 	            ];
 
 	            array_push($daily_scrum, $item);
@@ -55,14 +59,21 @@ class DailyScrumController extends Controller
 
     public function getAll($limit = 10, $offset = 0)
     {
-    	try{
-	        $data["count"] = DailyScrum::count();
-	        $daily_scrum = array();
+    	try{				
+				$data["count"] = DailyScrum::count();
+				$daily_scrum = array();
+
+				// $userid = DB::table('daily_scrum')->join('users','users.id','=','daily_scrum.id_users')
+				// 																				->select('daily_scrum.id_users')
+        //                                         ->get();
+				// $daily_scrum = JWTAuth::user()->daily_scrum();
+							// if ($data = JWTAuth::user()->id()) {
 
 	        foreach (DailyScrum::take($limit)->skip($offset)->get() as $p) {
 	            $item = [
 	                "id"                    => $p->id,
-	                "id_users"              => $p->id_users,                    
+	                "id_users"              => $p->id_users,             
+	                // "id_users"              => JWTAuth::user()->id,            
 	                "team"                  => $p->team,
 	                "nama_siswa"            => $p->nama_siswa,
                     "activity_yesterday"    => $p->activity_yesterday,
@@ -72,14 +83,31 @@ class DailyScrumController extends Controller
 	                "created_at"            => $p->created_at,
                     "updated_at"            => $p->updated_at,
                     "tanggal" 			    => date('d-m-y', strtotime($p->created_at)),  
-	            ];
+							];
+							
+							// $daily_scrum = JWTAuth::user()->data();
 
 	            array_push($daily_scrum, $item);
-	        }
-	        $data["daily_scrum"] = $daily_scrum;
-	        $data["status"] = 1;
-	        return response($data);
+					}
+					
+					$data = DailyScrum::findorFail($p->id);
+					$data["daily_scrum"] = $daily_scrum;
+					
+					$data["status"] = 1;
 
+
+
+					// $data = JWTAuth::user()->daily_scrum();
+					
+					// if ($data->id_users == JWTAuth()->id()) {
+					// }
+
+					if ($data->id_users == auth()->id()) {
+						return response($data);
+					}
+					// $data = JWTAuth::user()->id;
+	        
+				
 	    } catch(\Exception $e){
 			return response()->json([
 			  'status' => '0',
@@ -134,7 +162,6 @@ class DailyScrumController extends Controller
         try{
 
             $delete = DailyScrum::where("id", $id)->delete();
-
             if($delete){
               return response([
               	"status"	=> 1,

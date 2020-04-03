@@ -29,7 +29,7 @@ Route::middleware(['jwt.verify'])->group(function(){
     Route::get('dailyscrum/{limit}/{offset}', 'DailyScrumController@getAll'); //read dailyscrum
     Route::post('dailyscrum', 'DailyScrumController@store'); //create dailyscrum
 	Route::put('dailyscrum/{id}', "DailyScrumController@update"); //update dailyscrum
-	Route::delete('dailyscrum/{id}', "SiswaController@delete"); //delete dailyscrum
+	Route::delete('dailyscrum/{id}', "DailyScrumController@delete"); //delete dailyscrum
 
 });
 
