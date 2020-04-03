@@ -19,7 +19,7 @@ class DailyScrumController extends Controller
             $daily_scrum = array();
             
             $userid = DB::table('daily_scrum')->join('users','users.id','=','daily_scrum.id_users')
-                                                ->select('daily_scrum.id','daily_scrum.id_users')
+																								->select('daily_scrum.id','daily_scrum.id_users')
                                                 ->get();
 
 
@@ -107,11 +107,11 @@ class DailyScrumController extends Controller
     			]);
     		}
 
-            $data = new DailyScrum();  
+          $data = new DailyScrum();  
 	        $data->id_users = JWTAuth::user()->id;
 	        $data->team = $request->input('team');
 	        $data->activity_yesterday = $request->input('activity_yesterday');
-            $data->activity_today = $request->input('activity_today');
+          $data->activity_today = $request->input('activity_today');
 	        $data->problem_yesterday = $request->input('problem_yesterday');
 	        $data->solution = $request->input('solution');
 	        $data->save();
